@@ -74,10 +74,18 @@ extension Set where Element == WindowStyle {
     }
 }
 
-public struct Window {
+public class Window {
     static let NilWindow = unsafeBitCast(0, to: OpaquePointer.self)
 
     var window: OpaquePointer = NilWindow
+
+    init(window: OpaquePointer) {
+        self.window = window
+    }
+
+    deinit {
+        destroy()
+    }
 }
 
 
@@ -99,9 +107,6 @@ extension Window {
         }
         return Window(window: window)
     }
-}
-
-extension Window {
 
     /// Close a window and destroy all the attached resources
     public func close() {
@@ -112,11 +117,11 @@ extension Window {
     }
 
     ///  Destroy a window
-    public mutating func destroy() {
+    public func destroy() {
         guard self.window != Window.NilWindow else {
             return
         }
-        sfWindow_close(window)
+        sfWindow_destroy(window)
         window = Window.NilWindow
     }
 

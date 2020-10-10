@@ -6,14 +6,20 @@ import Foundation
 import CSFML
 
 
-public struct Context {
+public class Context {
 
     //static let NilContext = OpaquePointer(bitPattern: 0)!
     static let NilContext = unsafeBitCast(0, to: OpaquePointer.self)
 
     var context: OpaquePointer = NilContext
 
-    public static let shared = Context.create()!
+    init(context: OpaquePointer) {
+        self.context = context
+    }
+
+    deinit {
+        destroy()
+    }
 
 //    public static var activeContextId: UInt64 {
 //        get {
@@ -23,6 +29,7 @@ public struct Context {
 }
 
 extension Context {
+    public static let shared = Context.create()!
 
     /// Create a new context
     public static func create() -> Context? {
@@ -32,7 +39,7 @@ extension Context {
         return Context(context: context)
     }
 
-    public mutating func destroy() {
+    public func destroy() {
         guard context != Self.NilContext else {
             return
         }

@@ -8,7 +8,7 @@ print("Hello, SFML!")
 
 let videoMode = VideoMode.getDestopMode()
 if let sharedSettings = Context.shared.settings {
-    if var window = Window.create(mode: videoMode, title: "Hello SFML", styleSet: WindowStyle.DefaultStyleSet , settings: sharedSettings) {
+    if let window = Window.create(mode: videoMode, title: "Hello SFML", styleSet: WindowStyle.DefaultStyleSet , settings: sharedSettings) {
         defer {
             window.close()
             window.destroy()
