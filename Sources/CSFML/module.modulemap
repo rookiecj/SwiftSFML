@@ -1,0 +1,11 @@
+// https://packages.ubuntu.com/bionic/amd64/libcsfml-dev/filelist
+module CSFML [system] {
+    header "shim.h"
+    link "csfml-audio"
+    link "csfml-graphics"
+    link "csfml-network"
+    link "csfml-system"
+    link "csfml-window"
+
+    export *
+}
