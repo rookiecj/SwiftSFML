@@ -8,10 +8,9 @@ import CSFML
 
 public class Context {
 
-    //static let NilContext = OpaquePointer(bitPattern: 0)!
-    static let NilContext = unsafeBitCast(0, to: OpaquePointer.self)
+    //static let NilContext = unsafeBitCast(0, to: OpaquePointer.self)
 
-    var context: OpaquePointer = NilContext
+    var context: OpaquePointer? = nil
 
     init(context: OpaquePointer) {
         self.context = context
@@ -40,18 +39,17 @@ extension Context {
     }
 
     public func destroy() {
-        guard context != Self.NilContext else {
+        guard context != nil else {
             return
         }
         sfContext_destroy(context)
-        context = Self.NilContext
     }
 }
 
 extension Context {
     ///  Activate or deactivate explicitely a context
     public func setActive(active: Bool) {
-        guard context != Self.NilContext else {
+        guard context != nil else {
             return
         }
         sfContext_setActive(context, active ? 1 : 0)
@@ -60,7 +58,7 @@ extension Context {
     /// Get the settings of the context
     public var settings: ContextSettings? {
         get {
-            guard context != Self.NilContext else {
+            guard context != nil else {
                 return nil
             }
             return sfContext_getSettings(context)
