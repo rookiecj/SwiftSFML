@@ -20,42 +20,6 @@ public typealias WindowHandle = sfWindowHandle
 public typealias IntVector = sfVector2i
 public typealias FloatVector = sfVector2f
 
-/// sfVideoMode defines a video mode (width, height, bpp, frequency)
-///        and provides functions for getting modes supported
-///        by the display device
-public typealias VideoMode=sfVideoMode
-
-extension VideoMode {
-
-    /// Get the current desktop video mode
-    ///
-    /// return: Current desktop video mode
-    public static func getDestopMode() -> VideoMode {
-        sfVideoMode_getDesktopMode()
-    }
-
-    public static func getFullscreenModes(limit: Int) -> [VideoMode] {
-        var results = [VideoMode]()
-        var count = limit
-        guard let fullscreenModes = sfVideoMode_getFullscreenModes(&count) else {
-            return results
-        }
-
-        for a in 0..<count {
-            results.append(fullscreenModes[a])
-        }
-        return results
-    }
-}
-
-extension VideoMode {
-    public var isValid: Bool {
-        get {
-            sfVideoMode_isValid(self) != 0
-        }
-    }
-}
-
 public enum WindowStyle: UInt32 {
     case None         = 0      ///< No border / title bar (this flag and all others are mutually exclusive)
     case Titlebar     = 1 ///< Title bar + fixed border
@@ -63,13 +27,13 @@ public enum WindowStyle: UInt32 {
     case Close        = 4 ///< Titlebar + close button
     case Fullscreen   = 8 ///< Fullscreen mode (this flag and all others are mutually exclusive)
 
-    public static let DefaultStyleSet: Set = [Self.Titlebar, Self.Resize, Self.Close] ///< Default window style
+    public static let defaultStyleSet: Set = [Self.Titlebar, Self.Resize, Self.Close] ///< Default window style
 }
 
 extension Set where Element == WindowStyle {
     public func combine() -> UInt32 {
         self.reduce(0) { result, v in
-            result + v.rawValue
+            result | v.rawValue
         }
     }
 }
@@ -100,7 +64,7 @@ extension Window {
     }
 
     /// Construct a window from an existing control
-    public static func createFromHandle(handle: WindowHandle, contextSettings: ContextSettings) -> Window? {
+    public static func createFromHandle(from handle: WindowHandle, contextSettings: ContextSettings) -> Window? {
         var unsafeContextSettings = contextSettings
         guard let window = sfWindow_createFromHandle(handle, &unsafeContextSettings) else {
             return nil
@@ -131,9 +95,7 @@ extension Window {
 
     /// Tell whether or not a window is opened
     public var isOpen: Bool {
-        get {
-            window != Window.NilWindow && sfWindow_isOpen(window) != 0
-        }
+        window != Window.NilWindow && sfWindow_isOpen(window) == sfTrue
     }
 
     /// Get the position of a window
@@ -215,7 +177,7 @@ extension Window {
         guard window != Window.NilWindow else {
             return
         }
-        sfWindow_setVisible(window, visible ? 1 : 0)
+        sfWindow_setVisible(window, visible ? sfTrue : sfFalse)
     }
 
     ///  Activate or deactivate a window as the current target for OpenGL rendering
@@ -223,7 +185,7 @@ extension Window {
         guard window != Window.NilWindow else {
             return false
         }
-        return sfWindow_setActive(window, active ? 1 : 0) != 0
+        return sfWindow_setActive(window, active ? sfTrue : sfFalse) == sfTrue
     }
 
     public var focus: Bool {
@@ -231,7 +193,7 @@ extension Window {
             guard window != Self.NilWindow else {
                 return false
             }
-            return sfWindow_hasFocus(window) != 0
+            return sfWindow_hasFocus(window) == sfTrue
         }
 
         set {
@@ -261,7 +223,7 @@ extension Window {
     /// Pop the event on top of event queue, if any, and return it
     public func pollEvent() -> Event? {
         var event = sfEvent()
-        if sfWindow_pollEvent(window, &event) == 0 {
+        if sfWindow_pollEvent(window, &event) == sfFalse {
             return nil
         }
         return Event(proxy: event)
@@ -270,7 +232,7 @@ extension Window {
     ///  Wait for an event and return it
     public func waitEvent() -> Event? {
         var event = sfEvent()
-        if sfWindow_waitEvent(window, &event) == 0 {
+        if sfWindow_waitEvent(window, &event) == sfFalse {
             return nil
         }
         return Event(proxy: event)
