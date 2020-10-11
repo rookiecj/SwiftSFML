@@ -26,6 +26,9 @@ let package = Package(
             dependencies: ["SwiftSFML"]),
         .target(
             name: "SwiftSFMLApp",
-            dependencies: ["SwiftSFML"]),
+            dependencies: ["SwiftSFML"],
+                resources: [
+                    .copy("Resources/")
+                ]),
     ]
 )
