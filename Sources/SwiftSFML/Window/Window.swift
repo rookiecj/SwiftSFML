@@ -39,9 +39,8 @@ extension Set where Element == WindowStyle {
 }
 
 public class Window {
-    static let NilWindow = unsafeBitCast(0, to: OpaquePointer.self)
 
-    var window: OpaquePointer = NilWindow
+    var window: OpaquePointer? = nil
 
     init(window: OpaquePointer) {
         self.window = window
@@ -51,7 +50,6 @@ public class Window {
         destroy()
     }
 }
-
 
 extension Window {
 
@@ -74,7 +72,7 @@ extension Window {
 
     /// Close a window and destroy all the attached resources
     public func close() {
-        guard window != Window.NilWindow else {
+        guard window != nil else {
             return
         }
         sfWindow_close(window)
@@ -82,11 +80,11 @@ extension Window {
 
     ///  Destroy a window
     public func destroy() {
-        guard self.window != Window.NilWindow else {
+        guard self.window != nil else {
             return
         }
         sfWindow_destroy(window)
-        window = Window.NilWindow
+        window = nil
     }
 
 }
@@ -95,20 +93,20 @@ extension Window {
 
     /// Tell whether or not a window is opened
     public var isOpen: Bool {
-        window != Window.NilWindow && sfWindow_isOpen(window) == sfTrue
+        window != nil && sfWindow_isOpen(window) == sfTrue
     }
 
     /// Get the position of a window
     public var position: (x:Int32, y:Int32) {
         get {
-            guard window != Window.NilWindow else {
+            guard window != nil else {
                 return (x: 0, y: 0)
             }
             let sfVector = sfWindow_getPosition(window)
             return (x: sfVector.x, y: sfVector.y)
         }
         set {
-            guard window != Window.NilWindow else {
+            guard window != nil else {
                 return
             }
             var sfVector = sfVector2i()
@@ -121,7 +119,7 @@ extension Window {
     /// Get the size of the rendering region of a window
     public var size: (width: UInt32, height: UInt32) {
         get {
-            guard window != Window.NilWindow else {
+            guard window != nil else {
                 return (width: 0, height: 0)
             }
             let sfVector = sfWindow_getSize(window)
@@ -129,7 +127,7 @@ extension Window {
         }
 
         set {
-            guard window != Window.NilWindow else {
+            guard window != nil else {
                 return
             }
             var sfVector = sfVector2u()
@@ -141,7 +139,7 @@ extension Window {
 
     /// Change the title of a window
     public func setTitle(title: String) {
-        guard window != Window.NilWindow else {
+        guard window != nil else {
             return
         }
         title.withCString { (pointer: UnsafePointer<Int8>) -> Void in
@@ -151,7 +149,7 @@ extension Window {
 
     /// Get the OS-specific handle of the window
     public func getSystemHandle() -> WindowHandle? {
-        guard window != Window.NilWindow else {
+        guard window != nil else {
             return nil
         }
         return sfWindow_getSystemHandle(window)
@@ -174,7 +172,7 @@ extension Window {
     }
 
     public func setVisible(show visible: Bool) {
-        guard window != Window.NilWindow else {
+        guard window != nil else {
             return
         }
         sfWindow_setVisible(window, visible ? sfTrue : sfFalse)
@@ -182,7 +180,7 @@ extension Window {
 
     ///  Activate or deactivate a window as the current target for OpenGL rendering
     public func setActive(active: Bool) -> Bool {
-        guard window != Window.NilWindow else {
+        guard window != nil else {
             return false
         }
         return sfWindow_setActive(window, active ? sfTrue : sfFalse) == sfTrue
@@ -190,14 +188,14 @@ extension Window {
 
     public var focus: Bool {
         get {
-            guard window != Self.NilWindow else {
+            guard window != nil else {
                 return false
             }
             return sfWindow_hasFocus(window) == sfTrue
         }
 
         set {
-            guard window != Self.NilWindow else {
+            guard window != nil else {
                 return
             }
             requestFocus()
@@ -206,7 +204,7 @@ extension Window {
 
     /// Request the current window to be made the active foreground window
     public func requestFocus() {
-        guard window != Self.NilWindow else {
+        guard window != nil else {
             return
         }
         sfWindow_requestFocus(window)
@@ -214,7 +212,7 @@ extension Window {
 
     /// Display on screen what has been rendered to the window so far
     public func display() {
-        guard window != Self.NilWindow else {
+        guard window != nil else {
             return
         }
         sfWindow_display(window)
