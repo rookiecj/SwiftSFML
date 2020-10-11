@@ -4,7 +4,11 @@ import CoreFoundation
 
 print("Hello, SFML!")
 
-let videoMode = VideoMode.desktop
+//let videoMode = VideoMode.desktop
+//print("videoMode=\(videoMode)")
+//videoMode=sfVideoMode(width: 1920, height: 1080, bitsPerPixel: 24)
+
+let videoMode = VideoMode(width: 1024, height: 768, bitsPerPixel: 24)
 if let sharedSettings = Context.shared.settings {
     if let window = Window.create(mode: videoMode, title: "Hello SFML", styleSet: WindowStyle.defaultStyleSet , settings: sharedSettings) {
         defer {
